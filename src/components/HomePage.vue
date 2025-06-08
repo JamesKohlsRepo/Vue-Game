@@ -1,8 +1,10 @@
 <template>
   <div class="container">
     <h2>Join the Game</h2>
-    <input v-model="name" placeholder="Enter your name" />
-    <button @click="joinGame" :disabled="!name.trim()">Join Game</button>
+    <h3>
+      <input v-model="name" placeholder="Enter your name" />
+      <button @click="joinGame" :disabled="!name.trim()">Join Game</button>
+    </h3>
   </div>
 </template>
 
@@ -28,7 +30,7 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: 75vh;
 }
 input {
   margin-bottom: 10px;
