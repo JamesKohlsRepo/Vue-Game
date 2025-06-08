@@ -1,15 +1,35 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div id="app">
+    <HomePage v-if="!joined" @join="handleJoin" />
+    <GamePage v-else :playerName="playerName" @leave="handleLeave" />
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import HomePage from './components/HomePage.vue';
+import GamePage from './components/GamePage.vue';
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    HomePage,
+    GamePage,
+  },
+  data() {
+    return {
+      joined: false,
+      playerName: '',
+    };
+  },
+  methods: {
+    handleJoin(name) {
+      this.playerName = name;
+      this.joined = true;
+    },
+    handleLeave() {
+      this.playerName = '';
+      this.joined = false;
+    }
   }
 }
 </script>
