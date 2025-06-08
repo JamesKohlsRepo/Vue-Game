@@ -1,13 +1,20 @@
 # vue-game
 
+Project uses vue.js and node.js to deliver a lobby experience
+
 ## Project setup
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### Starting vue.js
 ```
-npm run serve
+npm run serve 
+```
+### Starting node.js (port 3000)
+```
+cd server
+node index.js
 ```
 
 ### Compiles and minifies for production

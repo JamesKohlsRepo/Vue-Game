@@ -1,7 +1,8 @@
 <template>
   <div id="app">
     <HomePage v-if="!joined" @join="handleJoin" />
-    <GamePage v-else 
+    <GamePage 
+      v-else 
       :playerList="playerList" 
       :currentPlayerId="currentPlayerId" 
       @leave="handleLeave" 
@@ -10,7 +11,7 @@
 </template>
 
 <script>
-import { v4 as uuidv4 } from 'uuid';
+import socket from './socket.js';
 import HomePage from './components/HomePage.vue';
 import GamePage from './components/GamePage.vue';
 
@@ -24,24 +25,29 @@ export default {
     return {
       joined: false,
       currentPlayerId: '',
-      playerList: [], 
+      playerList: [],
     };
   },
   methods: {
     handleJoin(name) {
-      const id = uuidv4();
-      this.currentPlayerId = id;
-      this.playerList.push({ id, name });
       this.joined = true;
+      socket.emit('player-joined', { name });
     },
     handleLeave() {
-      this.playerList = this.playerList.filter(
-        player => player.id !== this.currentPlayerId
-      );
-      this.currentPlayerId = '';
+      socket.emit('player-left');
       this.joined = false;
+      this.currentPlayerId = '';
     }
   },
+  mounted() {
+    socket.on('connect', () => {
+      this.currentPlayerId = socket.id;
+    });
+
+    socket.on('player-list', (players) => {
+      this.playerList = players;
+    });
+  }
 }
 </script>
 
