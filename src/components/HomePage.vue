@@ -2,7 +2,11 @@
   <div class="container">
     <h2>Join the Game</h2>
     <h3>
-      <input v-model="name" placeholder="Enter your name" />
+      <input 
+        v-model="name" 
+        placeholder="Enter your name" 
+        @keyup.enter="joinGame"
+      />
       <button @click="joinGame" :disabled="!name.trim()">Join Game</button>
     </h3>
   </div>

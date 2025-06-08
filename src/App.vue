@@ -1,11 +1,16 @@
 <template>
   <div id="app">
     <HomePage v-if="!joined" @join="handleJoin" />
-    <GamePage v-else :playerName="playerName" @leave="handleLeave" />
+    <GamePage v-else 
+      :playerList="playerList" 
+      :currentPlayerId="currentPlayerId" 
+      @leave="handleLeave" 
+    />
   </div>
 </template>
 
 <script>
+import { v4 as uuidv4 } from 'uuid';
 import HomePage from './components/HomePage.vue';
 import GamePage from './components/GamePage.vue';
 
@@ -18,19 +23,25 @@ export default {
   data() {
     return {
       joined: false,
-      playerName: '',
+      currentPlayerId: '',
+      playerList: [], 
     };
   },
   methods: {
     handleJoin(name) {
-      this.playerName = name;
+      const id = uuidv4();
+      this.currentPlayerId = id;
+      this.playerList.push({ id, name });
       this.joined = true;
     },
     handleLeave() {
-      this.playerName = '';
+      this.playerList = this.playerList.filter(
+        player => player.id !== this.currentPlayerId
+      );
+      this.currentPlayerId = '';
       this.joined = false;
     }
-  }
+  },
 }
 </script>
 
