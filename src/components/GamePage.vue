@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h2>({{ CurrentPlayerCount }}/4) Players in the Lobby</h2>
+    <h2>({{ currentPlayerCount }}/4) Players in the Lobby</h2>
         <ul class="player-list">
             <li 
                 v-for="player in playerList" 
@@ -27,10 +27,9 @@ export default {
   props: ['playerList', 'currentPlayerId'],
   computed: {
     currentPlayerName() {
-      const player = this.playerList.find(p => p.id === this.currentPlayerId);
-      return player ? player.name : 'Unknown';
+      return this.playerList.find(p => p.id === this.currentPlayerId);
     },
-    CurrentPlayerCount () {
+    currentPlayerCount() {
       return this.playerList.length;
     }
   }

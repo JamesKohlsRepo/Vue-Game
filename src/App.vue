@@ -31,6 +31,7 @@ export default {
   methods: {
     handleJoin(name) {
       this.joined = true;
+      this.currentPlayerId = socket.id;
       socket.emit('player-joined', { name });
     },
     handleLeave() {
