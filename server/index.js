@@ -13,6 +13,11 @@ const io = new Server(server, {
 
 let players = [];
 
+const Game = require('./game/gameLogic');
+const game = new Game();
+
+// game.addPlayer(), game.startGame() in  socket handlers
+
 io.on('connection', socket => {
   console.log('User connected:', socket.id);
 
