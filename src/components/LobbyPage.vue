@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h2>({{ currentPlayerCount }}/4) Players in the Game!</h2>
+    <h2>({{ currentPlayerCount }}/4) Players in the Lobby</h2>
     <ul class="player-list">
       <li v-for="player in playerList" :key="player.id" :class="{ 'current-player': player.id === currentPlayerId }">
         {{ player.name }}
@@ -10,13 +10,16 @@
       <button @click="$emit('leave')">
         Leave Game
       </button>
+      <button @click="$emit('Start')">
+        Start Game
+      </button>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'GamePage',
+  name: 'LobbyPage',
   props: ['playerList', 'currentPlayerId'],
   computed: {
     currentPlayerName() {

@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <HomePage v-if="!joined" @join="handleJoin" />
-    <GamePage 
+    <LobbyPage 
       v-else 
       :playerList="playerList" 
       :currentPlayerId="currentPlayerId" 
@@ -13,13 +13,14 @@
 <script>
 import socket from './socket.js';
 import HomePage from './components/HomePage.vue';
-import GamePage from './components/GamePage.vue';
+import LobbyPage from './components/LobbyPage.vue';
+//import GamePage from './components/GamePage.vue';
 
 export default {
   name: 'App',
   components: {
     HomePage,
-    GamePage,
+    LobbyPage,
   },
   data() {
     return {
@@ -38,6 +39,9 @@ export default {
       socket.emit('player-left');
       this.joined = false;
       this.currentPlayerId = '';
+    },
+    handleStart() {
+      
     }
   },
   mounted() {
