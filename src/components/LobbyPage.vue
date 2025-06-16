@@ -2,7 +2,7 @@
   <div class="container">
     <h2>({{ currentPlayerCount }}/4) Players in the Lobby</h2>
     <ul class="player-list">
-      <li v-for="player in playerList" :key="player.id" :class="{ 'current-player': player.id === currentPlayerId }">
+      <li v-for="player in lobbyPlayerList" :key="player.id" :class="{ 'current-player': player.id === currentPlayerId }">
         {{ player.name }}
       </li>
     </ul>
@@ -10,7 +10,7 @@
       <button @click="$emit('leave')">
         Leave Game
       </button>
-      <button @click="$emit('Start')">
+      <button @click="$emit('start')">
         Start Game
       </button>
     </div>
@@ -20,13 +20,13 @@
 <script>
 export default {
   name: 'LobbyPage',
-  props: ['playerList', 'currentPlayerId'],
+  props: ['lobbyPlayerList', 'currentPlayerId'],
   computed: {
     currentPlayerName() {
-      return this.playerList.find(p => p.id === this.currentPlayerId);
+      return this.lobbyPlayerList.find(p => p.id === this.currentPlayerId);
     },
     currentPlayerCount() {
-      return this.playerList.length;
+      return this.lobbyPlayerList.length;
     }
   }
 }

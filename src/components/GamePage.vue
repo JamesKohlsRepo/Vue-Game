@@ -11,19 +11,43 @@
         Leave Game
       </button>
     </div>
+    <div v-if="yourTurn">
+      <button @click="drawCard">Draw Card</button>
+      <button @click="endTurn">End Turn</button>
+    </div>
+    <div v-else>
+      <p>Waiting for your turn...</p>
+    </div>
+    <div>
+      <h3>Your Hand:</h3>
+      <ul>
+        <li v-for="card in hand" :key="card.name">{{ card.name }}</li>
+      </ul>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
   name: 'GamePage',
-  props: ['playerList', 'currentPlayerId'],
+  props: ['playerList', 'currentPlayerId', 'gameId', 'currentTurnId', 'hand'],
   computed: {
     currentPlayerName() {
       return this.playerList.find(p => p.id === this.currentPlayerId);
     },
     currentPlayerCount() {
       return this.playerList.length;
+    },
+    yourTurn() {
+      return this.currentPlayerId === this.currentTurnId;
+    }
+  },
+  methods: {
+    drawCard() {
+      this.$emit('draw-card');
+    },
+    endTurn() {
+      this.$emit('end-turn');
     }
   }
 }
