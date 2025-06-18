@@ -32,12 +32,12 @@ io.on('connection', socket => {
         const game = new Game(gameId);
 
         lobbyConnections.forEach(p => {
-          playerGameMap.set(p.id, gameId);
-          const sock = io.sockets.sockets.get(p.id);
-          if (sock) sock.join(gameId);
+            playerGameMap.set(p.id, gameId);
+            const sock = io.sockets.sockets.get(p.id);
+            if (sock) sock.join(gameId);
         });
 
-        lobbyConnections.forEach(p => game.addPlayer(p));
+        lobbyConnections.forEach(p => game.addPlayer(p.id, p.name));
         games.set(gameId, game);
 
         io.to(gameId).emit('game-started', { gameId });
@@ -46,40 +46,61 @@ io.on('connection', socket => {
 
         lobbyConnections = [];
         io.emit('lobby-player-list', lobbyConnections);
+        console.log('Game', gameId, 'started with players:', game.players.map(p => p.name).join(', '));
     });
 
     socket.on('player-left-lobby', () => {
         lobbyConnections = lobbyConnections.filter(p => p.id !== socket.id);
         io.emit('lobby-player-list', lobbyConnections);
+        console.log('Player left lobby:', socket.id);
     });
+
+    // server/index.js
 
     socket.on('player-left-game', ({ gameId }) => {
         const game = games.get(gameId);
-        if (game) {
-            game.removePlayer(socket.id);
-            io.emit('game-state', game.getGameState());
+        if (!game) return;
+
+        // 1) Remove from game state
+        game.removePlayer(socket.id);
+
+        // 2) Delete mapping so draw/end-turn lookups no longer return this game
+        playerGameMap.delete(socket.id);
+
+        // 3) Have the socket actually leave its room
+        socket.leave(gameId);
+
+        // 4) Broadcast the updated state only to the remaining players in that game
+        io.to(gameId).emit('game-state', game.getGameState());
+
+        console.log(`Player ${socket.id} left game ${gameId}`);
+
+        // 5) (optional) Tear down empty games
+        if (game.players.length === 0) {
+            games.delete(gameId);
+            console.log(`Game ${gameId} closed (no players left)`);
         }
     });
 
     // handle a draw request from a player
     socket.on('draw-card', () => {
-      const gameId = playerGameMap.get(socket.id);
-      const game = games.get(gameId);
-      if (!game) return;
-      const result = game.drawCard();
-      // broadcast updated state to that game room
-      io.to(gameId).emit('game-state', game.getGameState());
-      // send the updated hand back to only the drawing player
-      io.to(socket.id).emit('hand-update', result.hand);
+        const gameId = playerGameMap.get(socket.id);
+        const game = games.get(gameId);
+        if (!game) return;
+        const result = game.drawCard();
+        // broadcast updated state to that game room
+        io.to(gameId).emit('game-state', game.getGameState());
+        // send the updated hand back to only the drawing player
+        io.to(socket.id).emit('hand-update', result.hand);
     });
 
     // handle end-turn request from a player
     socket.on('end-turn', () => {
-      const gameId = playerGameMap.get(socket.id);
-      const game = games.get(gameId);
-      if (!game) return;
-      game.endTurn();
-      io.to(gameId).emit('game-state', game.getGameState());
+        const gameId = playerGameMap.get(socket.id);
+        const game = games.get(gameId);
+        if (!game) return;
+        game.endTurn();
+        io.to(gameId).emit('game-state', game.getGameState());
     });
 
     socket.on('disconnect', () => {

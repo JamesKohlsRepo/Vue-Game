@@ -8,7 +8,7 @@
     </ul>
     <div>
       <button @click="$emit('leave')">
-        Leave Game
+        Leave Lobby
       </button>
       <button @click="$emit('start')">
         Start Game
